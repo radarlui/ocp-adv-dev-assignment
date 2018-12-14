@@ -146,7 +146,7 @@ def prodTag = "${version}"
   }
 
   stage('Switch over to new Version') {
- input "Switch Production?"
+ //input "Switch Production?"
 
   echo "Switching Production application to ${destApp}."
   // Replace ${GUID}-tasks-prod with the name of your production project
