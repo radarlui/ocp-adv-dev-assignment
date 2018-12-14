@@ -42,7 +42,7 @@ items:
       jenkinsPipelineStrategy:
         env:
         - name: GUID
-          value: lui
+          value: ${GUID}
         jenkinsfilePath: Jenkinsfile
 kind: List
 metadata: []" | oc create -f - -n ${GUID}-jenkins
