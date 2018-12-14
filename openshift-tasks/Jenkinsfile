@@ -1,9 +1,20 @@
 #!groovy
-
-// Run this pipeline on the custom Maven Slave ('maven-appdev')
-// Maven Slaves have JDK and Maven already installed
-// 'maven-appdev' has skopeo installed as well.
-node('maven-appdev') {
+podTemplate(
+  label: "skopeo-pod",
+  cloud: "openshift",
+  inheritFrom: "maven",
+  containers: [
+    containerTemplate(
+      name: "jnlp",
+      image: "docker-registry.default.svc:5000/${GUID}-jenkins/jenkins-agent-appdev",
+      resourceRequestMemory: "1Gi",
+      resourceLimitMemory: "2Gi",
+      resourceRequestCpu: "1",
+      resourceLimitCpu: "2"
+    )
+  ]
+) {
+node('skopeo-pod') {
   // Define Maven Command. Make sure it points to the correct
   // settings for our Nexus installation (use the service to
   // bypass the router). The file nexus_openshift_settings.xml
@@ -153,6 +164,7 @@ def prodTag = "${version}"
   // Replace ${GUID}-tasks-prod with the name of your production project
   sh 'oc patch route tasks -n ${GUID}-tasks-prod -p \'{"spec":{"to":{"name":"' + destApp + '"}}}\''
   }
+ }
 }
 
 // Convenience Functions to read variables from the pom.xml
